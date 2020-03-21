@@ -1,0 +1,5 @@
+.idea/
+vendor/
+Versioner.iml
+
+*.exe
