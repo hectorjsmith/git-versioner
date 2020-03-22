@@ -10,6 +10,10 @@ go-mod-tidy:
 	go mod tidy -v
 	git diff-index --quiet HEAD
 
+format:
+	go fmt $(go list ./... | grep -v /vendor/)
+	go vet $(go list ./... | grep -v /vendor/)
+
 define prepare_build_vars
     $(eval VERSION_FLAG=-X 'main.appVersion=$(shell git describe --tags)')
 endef
