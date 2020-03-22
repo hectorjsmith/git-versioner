@@ -2,4 +2,7 @@
 vendor/
 Versioner.iml
 
+build/
+
 *.exe
+*.bin
