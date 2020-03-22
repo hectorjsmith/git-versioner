@@ -10,12 +10,19 @@ import (
 	"os"
 )
 
+// Application version - Global variable set during build process
+var appVersion string
+
 func main() {
+	if appVersion == "" {
+		appVersion = "development"
+	}
+
 	app := cli.NewApp()
 	app.Name = "Versioner"
 	app.Usage = "Manage releases with git tags and branches"
 	app.Description = "Small CLI application to manage releases using git tags and branches."
-	app.Version = "v0.0.0"
+	app.Version = appVersion
 
 	var minor bool
 	var major bool
