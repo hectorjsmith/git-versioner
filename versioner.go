@@ -58,6 +58,7 @@ func main() {
 			},
 			Before: func(c *cli.Context) error { runVersionerStartupValidations(true); return nil },
 			Action: func(c *cli.Context) error { return rel.Run(major, minor, testRelease, message) },
+			After: func(c *cli.Context) error { return logOperationComplete() },
 		},
 		{
 			Name:  "fix",
@@ -71,6 +72,7 @@ func main() {
 			},
 			Before: func(c *cli.Context) error { runVersionerStartupValidations(true); return nil },
 			Action: func(c *cli.Context) error { return fix.Run(version) },
+			After: func(c *cli.Context) error { return logOperationComplete() },
 		},
 		{
 			Name:  "latest",
@@ -101,4 +103,9 @@ func runVersionerStartupValidations(ensureCleanRepo bool) {
 	if ensureCleanRepo && !repo.IsClean() {
 		log.Fatal("Must run this tool on a clean repository")
 	}
+}
+
+func logOperationComplete() error {
+	log.Print("Done")
+	return nil
 }
