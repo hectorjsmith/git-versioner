@@ -11,7 +11,7 @@ import (
 
 func Run(major bool, minor bool, test bool, message string) error {
 	if util.CountTrueValues(major, minor, test) > 1 {
-		return fmt.Errorf("must select at most one option")
+		return fmt.Errorf("Must select at most one option")
 	}
 	if major {
 		return majorRelease(message)
@@ -25,7 +25,7 @@ func Run(major bool, minor bool, test bool, message string) error {
 }
 
 func currentRelease() error {
-	log.Printf("attempting to create new release version from branch name")
+	log.Printf("Attempting to create new release version from branch name")
 	return updateLatestTagAndTagCurrentCommit(
 		func(r *git.Repository) data.VersionData { return data.NewVersionDataFromString(r.CurrentBranch()) },
 		func(version data.VersionData) data.VersionData { return version }, "")
@@ -51,7 +51,7 @@ func testRelease(message string) error {
 
 	tag := repo.HeadCommitTag()
 	if tag != "" {
-		return fmt.Errorf("cannot create a release, head is already tagged as release '%s'", tag)
+		return fmt.Errorf("Cannot create a release, head is already tagged as release '%s'", tag)
 	}
 
     describe := repo.GitDescribeWithMatch("v?.?.?")
@@ -69,7 +69,7 @@ func updateLatestTagAndTagCurrentCommit(
 
 	tag := repo.HeadCommitTag()
 	if tag != "" {
-		return fmt.Errorf("cannot create a release, head is already tagged as release '%s'", tag)
+		return fmt.Errorf("Cannot create a release, head is already tagged as release '%s'", tag)
 	}
 
 	before := versionProvider(repo)
@@ -80,7 +80,7 @@ func updateLatestTagAndTagCurrentCommit(
 	log.Printf("Creating new tag '%s'", tagName)
 	err = repo.TagCurrentCommitWithMessage(tagName, message)
 	if err != nil {
-		return fmt.Errorf("failed to tag current commit: %v", err)
+		return fmt.Errorf("Failed to tag current commit: %v", err)
 	}
 	return nil
 }

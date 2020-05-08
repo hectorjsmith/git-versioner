@@ -25,7 +25,7 @@ func current() error {
 func specificVersion(version string) error {
 	v := versioner.GetMatchingVersion(data.NewVersionDataFromString(version), false)
 	if v.TagName == "" {
-		return fmt.Errorf("no matching tag found for version '%s'", version)
+		return fmt.Errorf("No matching tag found for version '%s'", version)
 	}
 	return fixSpecificVersion(v)
 }
