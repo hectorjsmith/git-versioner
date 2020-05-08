@@ -23,7 +23,7 @@ func current() error {
 }
 
 func specificVersion(version string) error {
-	v := versioner.GetMatchingVersion(data.NewVersionDataFromString(version))
+	v := versioner.GetMatchingVersion(data.NewVersionDataFromString(version), false)
 	if v.TagName == "" {
 		return fmt.Errorf("no matching tag found for version '%s'", version)
 	}
@@ -39,9 +39,9 @@ func fixSpecificVersion(version workerdata.TagVersionData) error {
 
 	before := version.VersionData
 	after := before.IncrementBugfix()
-	log.Printf("New bugfix version '%s' (based on '%s')", after.VersionString(), before.VersionString())
+	log.Printf("New bugfix version '%s' (incremented from: '%s')", after.VersionString(), before.VersionString())
 
 	branchName := "rel/v" + after.VersionString()
-	log.Printf("Creating new fix branch '%s'", branchName)
+	log.Printf("Creating new fix branch '%s' (based on tag: '%s')", branchName, version.TagName)
 	return repo.NewBranch(branchName)
 }

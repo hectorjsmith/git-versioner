@@ -39,8 +39,13 @@ func (v VersionData) Compare(other VersionData) int {
 	return other.Bugfix - v.Bugfix
 }
 
-func IsValidVersionString(versionString string) bool {
-	regex := getVersionStringRegex()
+func IsValidVersionString(versionString string, includeTestVersions bool) bool {
+	var regex *regexp.Regexp
+	if includeTestVersions {
+		regex = getVersionStringRegex()
+	} else {
+		regex = getNonTestVersionStringRegex()
+	}
 	return regex.MatchString(versionString)
 }
 
@@ -84,4 +89,8 @@ func mapSubexpNames(m, n []string) map[string]int {
 
 func getVersionStringRegex() *regexp.Regexp {
 	return regexp.MustCompile(`(?P<major>\d+)\.(?P<minor>\d+)\.(?P<bugfix>\d+)`)
+}
+
+func getNonTestVersionStringRegex() *regexp.Regexp {
+	return regexp.MustCompile(`(?P<major>\d+)\.(?P<minor>\d+)\.(?P<bugfix>\d+)$`)
 }
