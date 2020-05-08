@@ -28,7 +28,7 @@ func (s byVersionNumber) Less(i, j int) bool {
 }
 
 func GetLatestVersion() workerdata.TagVersionData {
-	validTags := getSortedValidTags()
+	validTags := getSortedValidTags(false)
 	currentVersion := validTags[0]
 
 	return workerdata.TagVersionData{
@@ -37,30 +37,37 @@ func GetLatestVersion() workerdata.TagVersionData {
 	}
 }
 
-func GetMatchingVersion(versionToFind data.VersionData) workerdata.TagVersionData {
-	validTags := getSortedValidTags()
+func GetMatchingVersion(versionToFind data.VersionData, includeTestVersions bool) workerdata.TagVersionData {
+	validTags := getSortedValidTags(includeTestVersions)
 	version, err := findLatestBugfixForVersion(versionToFind, validTags)
 	util.CheckIfError(err)
 	return version
 }
 
-func getSortedValidTags() []string {
+func GetNonTestMatchingVersion(versionToFind data.VersionData) workerdata.TagVersionData {
+	validTags := getSortedValidTags(false)
+	version, err := findLatestBugfixForVersion(versionToFind, validTags)
+	util.CheckIfError(err)
+	return version
+}
+
+func getSortedValidTags(includeTestVersions bool) []string {
 	repo, err := git.GetRepositoryForPath(".")
 	util.CheckIfError(err)
 
 	allTags := repo.AllTags()
-	validTags := filterToOnlyValidTags(allTags)
+	validTags := filterToOnlyValidTags(allTags, includeTestVersions)
 	if len(validTags) == 0 {
 		log.Fatal("No valid tags found")
 	}
 	return sortTags(validTags)
 }
 
-func filterToOnlyValidTags(tags []string) []string {
+func filterToOnlyValidTags(tags []string, includeTestVersions bool) []string {
 	validTags := []string{}
 	for i := 0; i < len(tags); i++ {
 		tag := tags[i]
-		if data.IsValidVersionString(tag) {
+		if data.IsValidVersionString(tag, includeTestVersions) {
 			validTags = append(validTags, tag)
 		}
 	}

@@ -23,7 +23,7 @@ func Test_GivenTagSliceWhenFilterToValidTagsThenOnlyValidTagsReturned(t *testing
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := filterToOnlyValidTags(tt.args.tags); !reflect.DeepEqual(got, tt.want) {
+			if got := filterToOnlyValidTags(tt.args.tags, true); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("filterToOnlyValidTags() = %v, want %v", got, tt.want)
 			}
 		})
