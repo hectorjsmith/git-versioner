@@ -49,13 +49,16 @@ OPTIONS:
 
 **Fix**
 
-This mode is to be used when going back to fix a previous version. This mode will checkout the tag for the version to fix (by default the latest version) and create a new fix branch for it.
+This mode is to be used when going back to fix a previous version.
+This mode will checkout the tag for the version to fix (by default the latest version) and create a new fix branch for it.
 
 For example, to fix `v1.2.0` the tool will:
 1. Checkout the `v1.2.0` tag
 2. Create a new branch with the new version name: `rel/v1.2.1`
 
 Once the fix has been done, the tool can be used again in `release` mode to create the new version tag by reading the branch name.
+
+*Note*: The `fix` command will ignore any test version tags (see above). It will only create fix branches for proper version tags.
 
 ```
 NAME:
