@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Fix creation of "fix" branches to ignore test versions (#15)
+- Fix incorrect test version when latest version has two digits (#17)
 
 ### Added
 - Add changelog file (#13)
