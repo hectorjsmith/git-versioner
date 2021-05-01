@@ -54,7 +54,7 @@ func testRelease(message string) error {
 		return fmt.Errorf("Cannot create a release, head is already tagged as release '%s'", tag)
 	}
 
-    describe := repo.GitDescribeWithMatch("v?.?.?")
+    describe := repo.GitDescribeWithMatchAndExclude("v*.*.*", "*-*")
     log.Printf("Creating new tag '%s'", describe)
     return repo.TagCurrentCommitWithMessage(describe, message)
 }

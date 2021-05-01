@@ -104,8 +104,12 @@ func (r *Repository) GitDescribe() string {
 	return r.GitDescribeWithMatch("*")
 }
 
-func (r *Repository) GitDescribeWithMatch(matchString string) string {
-	out, err := exec.Command(r.config.gitBinaryPath, "describe", "--tags", "--match", matchString).Output()
+func (r *Repository) GitDescribeWithMatch(matchPattern string) string {
+	return r.GitDescribeWithMatchAndExclude(matchPattern, "")
+}
+
+func (r *Repository) GitDescribeWithMatchAndExclude(matchPattern string, excludePattern string) string {
+	out, err := exec.Command(r.config.gitBinaryPath, "describe", "--tags", "--match", matchPattern, "--exclude", excludePattern).Output()
 	util.CheckIfError(err)
 
 	return strings.TrimSpace(string(out))
