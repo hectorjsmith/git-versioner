@@ -28,7 +28,6 @@ func main() {
 	var major bool
 	var testRelease bool
 	var version string
-	var verbose bool
 	var message string
 	app.Commands = []cli.Command{
 		{
@@ -58,6 +57,7 @@ func main() {
 			},
 			Before: func(c *cli.Context) error { runVersionerStartupValidations(true); return nil },
 			Action: func(c *cli.Context) error { return rel.Run(major, minor, testRelease, message) },
+			After: func(context *cli.Context) error { log.Print("Done"); return nil },
 		},
 		{
 			Name:  "fix",
@@ -71,27 +71,42 @@ func main() {
 			},
 			Before: func(c *cli.Context) error { runVersionerStartupValidations(true); return nil },
 			Action: func(c *cli.Context) error { return fix.Run(version) },
+			After: func(context *cli.Context) error { log.Print("Done"); return nil },
 		},
-		{
-			Name:  "latest",
-			Usage: "return the latest version info (highest value) - this is the version that will be incremented for release",
-			Flags: []cli.Flag{
-				cli.BoolFlag{
-					Name:        "verbose, v",
-					Usage:       "print more useful information about the latest version",
-					Destination: &verbose,
-				},
-			},
-			Before: func(c *cli.Context) error { runVersionerStartupValidations(false); return nil },
-			Action: func(c *cli.Context) error { return latest.Run(verbose) },
-		},
+		latestCmd(),
 	}
 
 	err := app.Run(os.Args)
 	if err != nil {
 		log.Fatal(err)
-	} else {
-		log.Print("Done")
+	}
+}
+
+func latestCmd() cli.Command {
+	options := latest.CommandOptions{}
+
+	return cli.Command{
+		Name:  "latest",
+		Usage: "return the latest version info (highest value) - this is the version that will be incremented for release",
+		Flags: []cli.Flag{
+			cli.BoolFlag{
+				Name:        "verbose, v",
+				Usage:       "print more useful information about the latest version",
+				Destination: &options.Verbose,
+			},
+			cli.BoolFlag{
+				Name:        "tag, t",
+				Usage:       "only show the latest tag, not the version info",
+				Destination: &options.Tag,
+			},
+		},
+		Before: func(c *cli.Context) error {
+			runVersionerStartupValidations(false)
+			return nil
+		},
+		Action: func(c *cli.Context) error {
+			return latest.Run(options)
+		},
 	}
 }
 

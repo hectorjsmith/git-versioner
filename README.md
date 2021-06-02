@@ -21,6 +21,7 @@ USAGE:
 
 OPTIONS:
    --verbose, -v  print more useful information about the latest version
+   --tag, -t      only show the latest tag, not the version info
 ```
 
 **Release**
