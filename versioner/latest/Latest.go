@@ -1,24 +1,38 @@
 package latest
 
 import (
+	"fmt"
 	"gitlab.com/hectorjsmith/git-versioner/git"
 	"gitlab.com/hectorjsmith/git-versioner/util"
 	"gitlab.com/hectorjsmith/git-versioner/versioner"
+	"gitlab.com/hectorjsmith/git-versioner/versioner/data"
 	"log"
 )
 
-func Run(verbose bool) error {
-	version := versioner.GetLatestVersion()
-	log.Printf("Latest version: %s (tag: %s)",
-		version.VersionData.VersionString(), version.TagName)
+type CommandOptions struct {
+	Verbose bool
+	Tag     bool
+}
 
-	if verbose {
-		printVerboseInfo()
+func Run(options CommandOptions) error {
+	version := versioner.GetLatestVersion()
+
+	if options.Verbose {
+		printVerboseInfo(version)
+	} else {
+		if options.Tag {
+			fmt.Println(version.TagName)
+		} else {
+			fmt.Println(version.VersionData.VersionString())
+		}
 	}
 	return nil
 }
 
-func printVerboseInfo() {
+func printVerboseInfo(version versionerdata.TagVersionData) {
+	log.Printf("Latest version: %s (tag: %s)",
+		version.VersionData.VersionString(), version.TagName)
+
 	extraInfoPrefix := "    "
 	repo, err := git.GetRepositoryForPath(".")
 	log.Printf("%sHEAD commit hash: %s", extraInfoPrefix, repo.HeadCommitHash())
