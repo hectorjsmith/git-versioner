@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func Test_findLatestBugfixForVersion(t *testing.T) {
+func Test_findLatestBugfixTagForVersion(t *testing.T) {
 	type args struct {
 		versionToFind data.Version
 		tags          []data.VersionTag

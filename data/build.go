@@ -16,14 +16,14 @@ func filterToOnlyValidTags(tags []string, includeTestVersions bool) []VersionTag
 	for i := 0; i < len(tags); i++ {
 		tag := tags[i]
 		if IsValidVersionString(tag, includeTestVersions) {
-			validTag := NewVersionTagFromTag(tag)
+			validTag := NewVersionTagFromGitTag(tag)
 			validTags = append(validTags, validTag)
 		}
 	}
 	return validTags
 }
 
-func NewVersionTagFromTag(tag string) VersionTag {
+func NewVersionTagFromGitTag(tag string) VersionTag {
 	return VersionTag{
 		Version: NewVersionFromString(tag),
 		Tag:     tag,

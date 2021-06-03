@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/urfave/cli/v2"
+	"gitlab.com/hectorjsmith/git-versioner/cmd/checkout"
 	"gitlab.com/hectorjsmith/git-versioner/cmd/fix"
 	"gitlab.com/hectorjsmith/git-versioner/cmd/latest"
 	"gitlab.com/hectorjsmith/git-versioner/cmd/rel"
@@ -29,6 +30,7 @@ func main() {
 		releaseCommand(),
 		fixCommand(),
 		latestCommand(),
+		checkoutCommand(),
 	}
 
 	err := app.Run(os.Args)
@@ -49,7 +51,7 @@ func releaseCommand() *cli.Command {
 			"Options are available to increment the major or minor versions.\n" +
 			"If no options are provided, the version number to use will be parsed from the current branch.\n" +
 			"For example, if run on a branch named 'release/v1.2.3', the new tag would be 'v1.2.3'.\n\n" +
-			"The repository must not have un-staged changes - i.e. the repo cannot be dirty",
+			"The repository must not have un-staged changes - i.e. the repo cannot be dirty.",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:        "message",
@@ -98,7 +100,7 @@ func fixCommand() *cli.Command {
 		Description: "Create a fix branch for the specified version (or latest version).\n" +
 			"This command will checkout the selected version (based on the corresponding git tag) and create a new " +
 			"fix branch.\n\n" +
-			"The repository must not have un-staged changes - i.e. the repo cannot be dirty",
+			"The repository must not have un-staged changes - i.e. the repo cannot be dirty.",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:        "version",
@@ -147,6 +149,36 @@ func latestCommand() *cli.Command {
 				Aliases:     []string{"t"},
 				Usage:       "show the latest version tag instead of the parsed version info",
 				Destination: &options.Tag,
+			},
+		},
+	}
+}
+
+func checkoutCommand() *cli.Command {
+	options := checkout.CommandOptions{}
+	return &cli.Command{
+		Name:  "checkout",
+		Usage: "Check out specific version",
+		Description: "Check out the git tag for the specified version. If no version is provided, the latest version " +
+			"is used.\n" +
+			"The version should be provided in the <major>.<minor>.<bugfix> syntax (e.g. '1.3.4').\n\n" +
+			"The repository must not have un-staged changes - i.e. the repo cannot be dirty.",
+		Before: func(c *cli.Context) error {
+			return runStartupValidations(true)
+		},
+		Action: func(c *cli.Context) error {
+			return checkout.Run(options)
+		},
+		Flags: []cli.Flag{
+			&cli.BoolFlag{
+				Name:        "latest",
+				Usage:       "check out the latest version",
+				Destination: &options.Latest,
+			},
+			&cli.StringFlag{
+				Name:        "version",
+				Usage:       "check out specific version",
+				Destination: &options.Version,
 			},
 		},
 	}
