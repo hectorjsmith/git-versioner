@@ -3,10 +3,10 @@ package main
 import (
 	"fmt"
 	"github.com/urfave/cli/v2"
+	"gitlab.com/hectorjsmith/git-versioner/cmd/fix"
+	"gitlab.com/hectorjsmith/git-versioner/cmd/latest"
+	"gitlab.com/hectorjsmith/git-versioner/cmd/rel"
 	"gitlab.com/hectorjsmith/git-versioner/git"
-	"gitlab.com/hectorjsmith/git-versioner/versioner/fix"
-	"gitlab.com/hectorjsmith/git-versioner/versioner/latest"
-	"gitlab.com/hectorjsmith/git-versioner/versioner/rel"
 	"log"
 	"os"
 )
@@ -153,7 +153,7 @@ func latestCommand() *cli.Command {
 }
 
 func runStartupValidations(ensureCleanRepo bool) error {
-	repo, err := git.GetRepositoryForPath(".")
+	repo, err := git.NewRepository(".")
 	if err != nil {
 		return fmt.Errorf("not a valid git repository: %v", err)
 	}

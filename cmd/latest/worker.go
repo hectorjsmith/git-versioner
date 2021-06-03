@@ -2,42 +2,36 @@ package latest
 
 import (
 	"fmt"
+	"gitlab.com/hectorjsmith/git-versioner/data"
 	"gitlab.com/hectorjsmith/git-versioner/git"
 	"gitlab.com/hectorjsmith/git-versioner/util"
-	"gitlab.com/hectorjsmith/git-versioner/versioner"
-	"gitlab.com/hectorjsmith/git-versioner/versioner/data"
 	"log"
 )
 
-type CommandOptions struct {
-	Verbose bool
-	Tag     bool
-}
-
 func Run(options CommandOptions) error {
-	version := versioner.GetLatestVersion()
+	version := git.GetLatestVersion()
 
 	if options.Verbose {
 		printVerboseInfo(version)
 	} else {
 		if options.Tag {
-			fmt.Println(version.TagName)
+			fmt.Println(version.Tag)
 		} else {
-			fmt.Println(version.VersionData.VersionString())
+			fmt.Println(version.Version.String())
 		}
 	}
 	return nil
 }
 
-func printVerboseInfo(version versionerdata.TagVersionData) {
-	log.Printf("Latest version: %s (tag: %s)",
-		version.VersionData.VersionString(), version.TagName)
+func printVerboseInfo(version data.VersionTag) {
+	log.Printf("latest version: %s (tag: %s)",
+		version.Version.String(), version.Tag)
+
+	repo, err := git.NewRepository(".")
+	util.CheckIfError(err)
 
 	extraInfoPrefix := "    "
-	repo, err := git.GetRepositoryForPath(".")
 	log.Printf("%sHEAD commit hash: %s", extraInfoPrefix, repo.HeadCommitHash())
-
-	util.CheckIfError(err)
 	if headTag := repo.HeadCommitTag(); headTag != "" {
 		log.Printf("%sHEAD tag: %s", extraInfoPrefix, headTag)
 	} else {
