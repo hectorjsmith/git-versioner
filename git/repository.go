@@ -12,10 +12,10 @@ type Repository struct {
 	Path   string
 }
 
-func GetRepositoryForPath(path string) (*Repository, error) {
+func NewRepository(path string) (*Repository, error) {
 	repo := &Repository{Path: path, config: defaultGitConfig()}
 	if !repo.isValidRepo() {
-		return nil, fmt.Errorf("Path is not a valid git repository '%s'", path)
+		return nil, fmt.Errorf("path is not a valid git repository '%s'", path)
 	}
 	return repo, nil
 }
