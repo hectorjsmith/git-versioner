@@ -21,3 +21,7 @@ endef
 build/local:
 	$(call prepare_build_vars)
 	go build -a --ldflags "${VERSION_FLAG}" -o build/git-versioner.bin ./versioner.go
+
+docs/generateChangelog:
+	./tools/git-chglog_linux_amd64 --config tools/chglog/config.yml v0.1.0.. > CHANGELOG.md
+
