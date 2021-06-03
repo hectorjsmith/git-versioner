@@ -21,7 +21,7 @@ func current() error {
 }
 
 func specificVersion(version string) error {
-	v := git.GetMatchingVersion(data.NewVersionFromString(version), false)
+	v := git.FindLatestBugfixTagForVersion(data.NewVersionFromString(version), false)
 	if v.Tag == "" {
 		return fmt.Errorf("no matching tag found for version '%s'", version)
 	}

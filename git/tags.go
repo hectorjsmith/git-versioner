@@ -14,7 +14,14 @@ func GetLatestVersion() data.VersionTag {
 	return currentVersion
 }
 
-func GetMatchingVersion(versionToFind data.Version, includeTestVersions bool) data.VersionTag {
+func FindTagForVersion(versionToFind data.Version, includeTestVersions bool) data.VersionTag {
+	validTags := GetSortedValidTags(includeTestVersions)
+	version, err := findVersionTagForVersion(versionToFind, validTags)
+	util.CheckIfError(err)
+	return *version
+}
+
+func FindLatestBugfixTagForVersion(versionToFind data.Version, includeTestVersions bool) data.VersionTag {
 	validTags := GetSortedValidTags(includeTestVersions)
 	version, err := findLatestBugfixForVersion(versionToFind, validTags)
 	util.CheckIfError(err)
@@ -28,9 +35,19 @@ func GetSortedValidTags(includeTestVersions bool) []data.VersionTag {
 	allTags := repo.AllTags()
 	validTags := data.NewVersionTagSlice(allTags, includeTestVersions)
 	if len(validTags) == 0 {
-		log.Fatal("no valid tags found")
+		log.Fatalf("no valid tags found (including test versions: %v)", includeTestVersions)
 	}
 	return validTags
+}
+
+func findVersionTagForVersion(versionToFind data.Version, tags []data.VersionTag) (*data.VersionTag, error) {
+	for i := 0; i < len(tags); i++ {
+		tag := tags[i]
+		if versionToFind.Compare(tag.Version) == 0 {
+			return &tag, nil
+		}
+	}
+	return nil, fmt.Errorf("no match found for version '%s'", versionToFind)
 }
 
 func findLatestBugfixForVersion(versionToFind data.Version, tags []data.VersionTag) (data.VersionTag, error) {
@@ -49,7 +66,7 @@ func findLatestBugfixForVersion(versionToFind data.Version, tags []data.VersionT
 		}
 	}
 	if !matchFound {
-		return bestMatch, fmt.Errorf("no match found")
+		return bestMatch, fmt.Errorf("no match found for version '%s'", versionToFind)
 	}
 	return bestMatch, nil
 }

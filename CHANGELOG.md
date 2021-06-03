@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add changelog file (#13)
 - Log a "Done" message at the end of each successful operation (#14)
 - Option to get raw latest tag/version
+- Command to check out a version (#20)
 
 ## [0.1.0] - 2020-03-22
 

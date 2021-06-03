@@ -56,7 +56,7 @@ DESCRIPTION:
    If no options are provided, the version number to use will be parsed from the current branch.
    For example, if run on a branch named 'release/v1.2.3', the new tag would be 'v1.2.3'.
 
-   The repository must not have un-staged changes - i.e. the repo cannot be dirty
+   The repository must not have un-staged changes - i.e. the repo cannot be dirty.
 
 OPTIONS:
    --message value, -m value  Message to put in git tag. Using this will create an annotated tag.
@@ -90,9 +90,33 @@ DESCRIPTION:
    Create a fix branch for the specified version (or latest version).
    This command will checkout the selected version (based on the corresponding git tag) and create a new fix branch.
 
-   The repository must not have un-staged changes - i.e. the repo cannot be dirty
+   The repository must not have un-staged changes - i.e. the repo cannot be dirty.
 
 OPTIONS:
    --version value, -v value  version to fix (e.g. '1.2.0')
    --help, -h                 show help (default: false)
+```
+
+**Checkout**
+
+This command facilitates checking out the git tag that corresponds to a specific version.
+The command can either check out the latest version, or a specific version provided by the user.
+
+```
+NAME:
+   git-versioner.bin checkout - Check out specific version
+
+USAGE:
+   git-versioner.bin checkout [command options] [arguments...]
+
+DESCRIPTION:
+   Checkout the git tag for the specified version. If no version is provided, the latest version is used.
+   The version should be provided in the <major>.<minor>.<bugfix> syntax (e.g. '1.3.4').
+
+   The repository must not have un-staged changes - i.e. the repo cannot be dirty.
+
+OPTIONS:
+   --latest         check out the latest version (default: false)
+   --version value  check out specific version
+   --help, -h       show help (default: false)
 ```
