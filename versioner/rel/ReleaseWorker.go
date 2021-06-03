@@ -9,16 +9,28 @@ import (
 	"log"
 )
 
-func Run(major bool, minor bool, test bool, message string) error {
-	if util.CountTrueValues(major, minor, test) > 1 {
+type CommandOptions struct {
+	Major   bool
+	Minor   bool
+	Test    bool
+	Message string
+}
+
+func (opt CommandOptions) isValid() bool {
+	return util.CountTrueValues(opt.Major, opt.Minor, opt.Test) > 1
+}
+
+func Run(options CommandOptions) error {
+	if options.isValid() {
 		return fmt.Errorf("Must select at most one option")
 	}
-	if major {
-		return majorRelease(message)
-	} else if minor {
-		return minorRelease(message)
-	} else if test {
-		return testRelease(message)
+
+	if options.Major {
+		return majorRelease(options.Message)
+	} else if options.Minor {
+		return minorRelease(options.Message)
+	} else if options.Test {
+		return testRelease(options.Message)
 	} else {
 		return currentRelease()
 	}
@@ -54,9 +66,9 @@ func testRelease(message string) error {
 		return fmt.Errorf("Cannot create a release, head is already tagged as release '%s'", tag)
 	}
 
-    describe := repo.GitDescribeWithMatchAndExclude("v*.*.*", "*-*")
-    log.Printf("Creating new tag '%s'", describe)
-    return repo.TagCurrentCommitWithMessage(describe, message)
+	describe := repo.GitDescribeWithMatchAndExclude("v*.*.*", "*-*")
+	log.Printf("Creating new tag '%s'", describe)
+	return repo.TagCurrentCommitWithMessage(describe, message)
 }
 
 func updateLatestTagAndTagCurrentCommit(

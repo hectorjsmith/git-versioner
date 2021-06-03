@@ -10,11 +10,15 @@ import (
 	"log"
 )
 
-func Run(version string) error {
-	if version == "" {
+type CommandOptions struct {
+	Version string
+}
+
+func Run(options CommandOptions) error {
+	if options.Version == "" {
 		return current()
 	}
-	return specificVersion(version)
+	return specificVersion(options.Version)
 }
 
 func current() error {

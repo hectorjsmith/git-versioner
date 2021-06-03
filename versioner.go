@@ -1,7 +1,8 @@
 package main
 
 import (
-	"github.com/urfave/cli"
+	"fmt"
+	"github.com/urfave/cli/v2"
 	"gitlab.com/hectorjsmith/git-versioner/git"
 	"gitlab.com/hectorjsmith/git-versioner/versioner/fix"
 	"gitlab.com/hectorjsmith/git-versioner/versioner/latest"
@@ -24,56 +25,10 @@ func main() {
 	app.Description = "Small CLI application to manage releases using git tags and branches."
 	app.Version = appVersion
 
-	var minor bool
-	var major bool
-	var testRelease bool
-	var version string
-	var message string
-	app.Commands = []cli.Command{
-		{
-			Name:  "release",
-			Usage: "release a new version - by default the branch name is used to parse the new version",
-			Flags: []cli.Flag{
-				cli.StringFlag{
-					Name:        "message",
-					Usage:       "Message to put in git tag. Using this will create an annotated tag.",
-					Destination: &message,
-				},
-				cli.BoolFlag{
-					Name:        "major",
-					Usage:       "major release (v1.5.10 -> v2.0.0)",
-					Destination: &major,
-				},
-				cli.BoolFlag{
-					Name:        "minor",
-					Usage:       "minor release (v1.5.10 -> v1.6.0)",
-					Destination: &minor,
-				},
-				cli.BoolFlag{
-					Name:        "test",
-					Usage:       "test release (v1.5.10-5-g600d3f2)",
-					Destination: &testRelease,
-				},
-			},
-			Before: func(c *cli.Context) error { runVersionerStartupValidations(true); return nil },
-			Action: func(c *cli.Context) error { return rel.Run(major, minor, testRelease, message) },
-			After: func(context *cli.Context) error { log.Print("Done"); return nil },
-		},
-		{
-			Name:  "fix",
-			Usage: "create a fix branch for an existing version",
-			Flags: []cli.Flag{
-				cli.StringFlag{
-					Name:        "version, v",
-					Usage:       "version to fix (e.g. '1.2.0')",
-					Destination: &version,
-				},
-			},
-			Before: func(c *cli.Context) error { runVersionerStartupValidations(true); return nil },
-			Action: func(c *cli.Context) error { return fix.Run(version) },
-			After: func(context *cli.Context) error { log.Print("Done"); return nil },
-		},
-		latestCmd(),
+	app.Commands = []*cli.Command{
+		releaseCommand(),
+		fixCommand(),
+		latestCommand(),
 	}
 
 	err := app.Run(os.Args)
@@ -82,40 +37,128 @@ func main() {
 	}
 }
 
-func latestCmd() cli.Command {
-	options := latest.CommandOptions{}
+func releaseCommand() *cli.Command {
+	options := rel.CommandOptions{}
 
-	return cli.Command{
-		Name:  "latest",
-		Usage: "return the latest version info (highest value) - this is the version that will be incremented for release",
+	return &cli.Command{
+		Name:  "release",
+		Usage: "Create new version tag",
+		Description: "Create a new version git tag named by taking the latest version and incrementing it.\n" +
+			"This command assumes the use of semantic versioning. The version string is parsed as: " +
+			"<major>.<minor>.<bugfix>\n" +
+			"Options are available to increment the major or minor versions.\n" +
+			"If no options are provided, the version number to use will be parsed from the current branch.\n" +
+			"For example, if run on a branch named 'release/v1.2.3', the new tag would be 'v1.2.3'.\n\n" +
+			"The repository must not have un-staged changes - i.e. the repo cannot be dirty",
 		Flags: []cli.Flag{
-			cli.BoolFlag{
-				Name:        "verbose, v",
-				Usage:       "print more useful information about the latest version",
-				Destination: &options.Verbose,
+			&cli.StringFlag{
+				Name:        "message",
+				Aliases:     []string{"m"},
+				Usage:       "Message to put in git tag. Using this will create an annotated tag.",
+				Destination: &options.Message,
 			},
-			cli.BoolFlag{
-				Name:        "tag, t",
-				Usage:       "only show the latest tag, not the version info",
-				Destination: &options.Tag,
+			&cli.BoolFlag{
+				Name:        "major",
+				Usage:       "major release (v1.5.10 -> v2.0.0)",
+				Destination: &options.Major,
+			},
+			&cli.BoolFlag{
+				Name:        "minor",
+				Usage:       "minor release (v1.5.10 -> v1.6.0)",
+				Destination: &options.Minor,
+			},
+			&cli.BoolFlag{
+				Name:        "test",
+				Usage:       "test release (v1.5.10-5-g600d3f2)",
+				Destination: &options.Test,
 			},
 		},
 		Before: func(c *cli.Context) error {
-			runVersionerStartupValidations(false)
-			return nil
+			return runStartupValidations(true)
 		},
 		Action: func(c *cli.Context) error {
-			return latest.Run(options)
+			return rel.Run(options)
+		},
+		After: func(c *cli.Context) error {
+			log.Print(c.Err())
+			if c.Err() == nil {
+				log.Print("Done")
+			}
+			return nil
 		},
 	}
 }
 
-func runVersionerStartupValidations(ensureCleanRepo bool) {
+func fixCommand() *cli.Command {
+	options := fix.CommandOptions{}
+
+	return &cli.Command{
+		Name:  "fix",
+		Usage: "Create fix branch",
+		Description: "Create a fix branch for the specified version (or latest version).\n" +
+			"This command will checkout the selected version (based on the corresponding git tag) and create a new " +
+			"fix branch.\n\n" +
+			"The repository must not have un-staged changes - i.e. the repo cannot be dirty",
+		Flags: []cli.Flag{
+			&cli.StringFlag{
+				Name:        "version",
+				Aliases:     []string{"v"},
+				Usage:       "version to fix (e.g. '1.2.0')",
+				Destination: &options.Version,
+			},
+		},
+		Before: func(c *cli.Context) error {
+			return runStartupValidations(true)
+		},
+		Action: func(c *cli.Context) error {
+			return fix.Run(options)
+		},
+		After: func(c *cli.Context) error {
+			log.Print("Done")
+			return nil
+		},
+	}
+}
+
+func latestCommand() *cli.Command {
+	options := latest.CommandOptions{}
+
+	return &cli.Command{
+		Name:  "latest",
+		Usage: "Show latest version info",
+		Description: "Show the latest version for this repository.\nThe version data is parsed from git tags found in " +
+			"the repository.\n\n" +
+			"By default prints the version string (e.g. 3.12.1).",
+		Before: func(c *cli.Context) error {
+			return runStartupValidations(false)
+		},
+		Action: func(c *cli.Context) error {
+			return latest.Run(options)
+		},
+		Flags: []cli.Flag{
+			&cli.BoolFlag{
+				Name:        "verbose",
+				Aliases:     []string{"v"},
+				Usage:       "print more useful information about the latest version",
+				Destination: &options.Verbose,
+			},
+			&cli.BoolFlag{
+				Name:        "tag",
+				Aliases:     []string{"t"},
+				Usage:       "show the latest version tag instead of the parsed version info",
+				Destination: &options.Tag,
+			},
+		},
+	}
+}
+
+func runStartupValidations(ensureCleanRepo bool) error {
 	repo, err := git.GetRepositoryForPath(".")
 	if err != nil {
-		log.Fatal("Must run this tool in a git repository", err)
+		return fmt.Errorf("not a valid git repository: %v", err)
 	}
 	if ensureCleanRepo && !repo.IsClean() {
-		log.Fatal("Must run this tool on a clean repository")
+		return fmt.Errorf("git repository is dirty")
 	}
+	return nil
 }

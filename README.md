@@ -14,19 +14,27 @@ This mode simply prints out the latest published version (as understood by the t
 
 ```
 NAME:
-   git-versioner.bin latest - return the latest version info (highest value) - this is the version that will be incremented for release
+   git-versioner.bin latest - Show latest version info
 
 USAGE:
    git-versioner.bin latest [command options] [arguments...]
 
+DESCRIPTION:
+   Show the latest version for this repository.
+   The version data is parsed from git tags found in the repository.
+
+   By default prints the version string (e.g. 3.12.1).
+
 OPTIONS:
-   --verbose, -v  print more useful information about the latest version
-   --tag, -t      only show the latest tag, not the version info
+   --verbose, -v  print more useful information about the latest version (default: false)
+   --tag, -t      show the latest version tag instead of the parsed version info (default: false)
+   --help, -h     show help (default: false)
+
 ```
 
 **Release**
 
-This mode will automatically create a new version tag. By default it will attempt the read the new version from the branch name (e.g. when run on a branch named `release/v1.2.3` it will create a `v1.2.3` tag).
+This mode will automatically create a new version tag. By default, it will attempt the read the new version from the branch name (e.g. when run on a branch named `release/v1.2.3` it will create a `v1.2.3` tag).
 
 Alternatively, the `release` mode can be used to increment the major or minor versions (using the `--minor` or `--major` flags).
 
@@ -36,16 +44,26 @@ The `--test` flag can be used instead of `--major` or `--minor` to create a test
 
 ```
 NAME:
-   git-versioner.bin release - release a new version - by default the branch name is used to parse the new version
+   git-versioner.bin release - Create new version tag
 
 USAGE:
    git-versioner.bin release [command options] [arguments...]
 
+DESCRIPTION:
+   Create a new version git tag named by taking the latest version and incrementing it.
+   This command assumes the use of semantic versioning. The version string is parsed as: <major>.<minor>.<bugfix>
+   Options are available to increment the major or minor versions.
+   If no options are provided, the version number to use will be parsed from the current branch.
+   For example, if run on a branch named 'release/v1.2.3', the new tag would be 'v1.2.3'.
+
+   The repository must not have un-staged changes - i.e. the repo cannot be dirty
+
 OPTIONS:
-   --message value  Message to put in git tag. Using this will create an annotated tag.
-   --major          major release (v1.5.10 -> v2.0.0)
-   --minor          minor release (v1.5.10 -> v1.6.0)
-   --test           test release (v1.5.10-5-g600d3f2)
+   --message value, -m value  Message to put in git tag. Using this will create an annotated tag.
+   --major                    major release (v1.5.10 -> v2.0.0) (default: false)
+   --minor                    minor release (v1.5.10 -> v1.6.0) (default: false)
+   --test                     test release (v1.5.10-5-g600d3f2) (default: false)
+   --help, -h                 show help (default: false)
 ```
 
 **Fix**
@@ -63,11 +81,18 @@ Once the fix has been done, the tool can be used again in `release` mode to crea
 
 ```
 NAME:
-   git-versioner.bin fix - create a fix branch for an existing version
+   git-versioner.bin fix - Create fix branch
 
 USAGE:
    git-versioner.bin fix [command options] [arguments...]
 
+DESCRIPTION:
+   Create a fix branch for the specified version (or latest version).
+   This command will checkout the selected version (based on the corresponding git tag) and create a new fix branch.
+
+   The repository must not have un-staged changes - i.e. the repo cannot be dirty
+
 OPTIONS:
    --version value, -v value  version to fix (e.g. '1.2.0')
+   --help, -h                 show help (default: false)
 ```
