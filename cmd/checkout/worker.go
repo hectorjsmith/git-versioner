@@ -14,6 +14,8 @@ func Run(options CommandOptions) error {
 		versionTag = getVersionTagFromOptions(options)
 	}
 
+	log.Printf("checking out version '%s' (tag: '%s')", versionTag.Version, versionTag.Tag)
+
 	repo, err := git.NewRepository(".")
 	if err != nil {
 		return err
