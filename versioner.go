@@ -6,6 +6,7 @@ import (
 	"gitlab.com/hectorjsmith/git-versioner/cmd/checkout"
 	"gitlab.com/hectorjsmith/git-versioner/cmd/fix"
 	"gitlab.com/hectorjsmith/git-versioner/cmd/latest"
+	"gitlab.com/hectorjsmith/git-versioner/cmd/list"
 	"gitlab.com/hectorjsmith/git-versioner/cmd/rel"
 	"gitlab.com/hectorjsmith/git-versioner/git"
 	"log"
@@ -25,6 +26,7 @@ func main() {
 	app.Version = version
 
 	app.Commands = []*cli.Command{
+		listCommand(),
 		releaseCommand(),
 		fixCommand(),
 		latestCommand(),
@@ -34,6 +36,36 @@ func main() {
 	err := app.Run(os.Args)
 	if err != nil {
 		log.Fatal(err)
+	}
+}
+
+func listCommand() *cli.Command {
+	options := list.CommandOptions{}
+
+	return &cli.Command{
+		Name: "list",
+		Aliases: []string{"ls"},
+		Usage: "List all git versions",
+		Description: "",
+		Flags: []cli.Flag{
+			&cli.BoolFlag{
+				Name: "tag",
+				Aliases: []string{"t"},
+				Usage: "Print git tags instead of version numbers",
+				Destination: &options.Tag,
+			},
+			&cli.BoolFlag{
+				Name: "test",
+				Usage: "Include test versions (only applies when --tag is used)",
+				Destination: &options.Test,
+			},
+		},
+		Before: func(c *cli.Context) error {
+			return runStartupValidations(false)
+		},
+		Action: func(c *cli.Context) error {
+			return list.Run(options)
+		},
 	}
 }
 
