@@ -8,6 +8,23 @@ The idea behind this tool is to leverage git tags as the system of record for a 
 
 The tool has two main modes, `release` and `fix` as well as an option to view the latest version.
 
+**List**
+
+List out all known versions.
+
+```
+NAME:
+   git-versioner.bin list - List all git versions
+
+USAGE:
+   git-versioner.bin list [command options] [arguments...]
+
+OPTIONS:
+   --tag, -t   Print git tags instead of version numbers (default: false)
+   --test      Include test versions (only applies when --tag is used) (default: false)
+   --help, -h  show help (default: false)
+```
+
 **Latest**
 
 This mode simply prints out the latest published version (as understood by the tool).
