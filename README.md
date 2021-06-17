@@ -4,9 +4,19 @@ Small CLI application to manage releases using git tags and branches.
 
 ## Instructions
 
-The idea behind this tool is to leverage git tags as the system of record for a project's version. The idea being that version numbers are not stored in files within the repository but are instead read from the current commit. This avoids having to manually bump the version number.
+The idea behind this tool is to leverage git tags as the system of record for a project's version. Version numbers should not be stored in files within the repository but should instead be read from the current commit. This avoids having to manually bump the version number.
 
-The tool has two main modes, `release` and `fix` as well as an option to view the latest version.
+The tool has two main modes: `release` and `fix`, as well as options to view version data.
+
+| Command | Description |
+|---------|-------------|
+| `list`  | List out all known versions |
+| `latest` | Print out the latest version |
+| `checkout` | Checkout the git tag of a specific version (or the latest version) |
+| `release` | Create a new version tag by incrementing one of the values |
+| `fix` | Fix a specific version by checking out that version's git tag and creating a new branch |
+
+---
 
 **List**
 
@@ -47,6 +57,30 @@ OPTIONS:
    --tag, -t      show the latest version tag instead of the parsed version info (default: false)
    --help, -h     show help (default: false)
 
+```
+
+**Checkout**
+
+This command facilitates checking out the git tag that corresponds to a specific version.
+The command can either check out the latest version, or a specific version provided by the user.
+
+```
+NAME:
+   git-versioner.bin checkout - Check out specific version
+
+USAGE:
+   git-versioner.bin checkout [command options] [arguments...]
+
+DESCRIPTION:
+   Checkout the git tag for the specified version. If no version is provided, the latest version is used.
+   The version should be provided in the <major>.<minor>.<bugfix> syntax (e.g. '1.3.4').
+
+   The repository must not have un-staged changes - i.e. the repo cannot be dirty.
+
+OPTIONS:
+   --latest         check out the latest version (default: false)
+   --version value  check out specific version
+   --help, -h       show help (default: false)
 ```
 
 **Release**
@@ -112,28 +146,4 @@ DESCRIPTION:
 OPTIONS:
    --version value, -v value  version to fix (e.g. '1.2.0')
    --help, -h                 show help (default: false)
-```
-
-**Checkout**
-
-This command facilitates checking out the git tag that corresponds to a specific version.
-The command can either check out the latest version, or a specific version provided by the user.
-
-```
-NAME:
-   git-versioner.bin checkout - Check out specific version
-
-USAGE:
-   git-versioner.bin checkout [command options] [arguments...]
-
-DESCRIPTION:
-   Checkout the git tag for the specified version. If no version is provided, the latest version is used.
-   The version should be provided in the <major>.<minor>.<bugfix> syntax (e.g. '1.3.4').
-
-   The repository must not have un-staged changes - i.e. the repo cannot be dirty.
-
-OPTIONS:
-   --latest         check out the latest version (default: false)
-   --version value  check out specific version
-   --help, -h       show help (default: false)
 ```

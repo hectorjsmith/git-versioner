@@ -6,12 +6,31 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 
 ## [Unreleased]
 
+
+## [v0.2.0] - 2021-06-17
 ### Bug Fixes
 - (bf35588) fix: support multiple digits in version string ([#17](https://gitlab.com/hectorjsmith/git-versioner/issues/17))
 
 ### Features
+- (58241fd) feat: add new list command ([#6](https://gitlab.com/hectorjsmith/git-versioner/issues/6))
 - (21faa5c) feat: new checkout command ([#20](https://gitlab.com/hectorjsmith/git-versioner/issues/20))
 - (ef2944e) feat: only print version string when using latest
+
+### Merge Requests
+- (213be3d) Merge branch 'refactor/add-log-message-to-checkout-command' into 'develop'
+- (48af2ed) Merge branch '6-add-option-to-print-all-versions' into 'develop'
+- (a0baea2) Merge branch '11-build-versions-for-other-platforms' into 'develop'
+- (750a1d9) Merge branch '21-auto-gen-project-changelog' into 'develop'
+- (a06f62c) Merge branch '20-command-to-checkout-latest-version-tag' into 'develop'
+- (00a3d3e) Merge branch 'refactor/code-cleanup' into 'develop'
+- (9c99520) Merge branch 'refactor/organize-cli-command-processing-code' into 'develop'
+- (f995f4a) Merge branch 'feat/only-print-tag-for-latest-cmd' into 'develop'
+- (8f24336) Merge branch '17-incorrect-test-version-when-major-version-is-two-digits' into 'develop'
+- (003193d) Merge branch 'fix/remove-dependency-check-from-pipeline' into 'develop'
+- (ee18d59) Merge branch '14-add-completion-message-at-end-of-process' into 'develop'
+- (6fb82be) Merge branch '15-version-flag-does-not-work-for-fix-command' into 'develop'
+- (93a2477) Merge branch '13-add-changelog-file' into 'develop'
+- (2a1d5e6) Merge branch '10-add-license' into 'master'
 
 
 ## [v0.1.0] - 2020-03-22
@@ -29,5 +48,6 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 [Keep a Changelog]: https://keepachangelog.com/en/1.0.0/
 [Semantic Versioning]: https://semver.org/spec/v2.0.0.html
 [git-chglog]: https://github.com/git-chglog/git-chglog
-[Unreleased]: https://gitlab.com/hectorjsmith/git-versioner/compare/v0.1.0...main
+[Unreleased]: https://gitlab.com/hectorjsmith/git-versioner/compare/v0.2.0...main
+[v0.2.0]: https://gitlab.com/hectorjsmith/git-versioner/compare/v0.1.0...v0.2.0
 [v0.1.0]: https://gitlab.com/hectorjsmith/git-versioner/compare/v0.0.0...v0.1.0
