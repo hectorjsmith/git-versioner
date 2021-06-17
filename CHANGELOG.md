@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog], and this project adheres to [Semantic
 ## [Unreleased]
 
 
-## [v0.2.0] - 2021-06-04
+## [v0.2.0] - 2021-06-17
 ### Bug Fixes
 - (bf35588) fix: support multiple digits in version string ([#17](https://gitlab.com/hectorjsmith/git-versioner/issues/17))
 
