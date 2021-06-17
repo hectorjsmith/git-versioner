@@ -112,8 +112,9 @@ func releaseCommand() *cli.Command {
 			return rel.Run(options)
 		},
 		After: func(c *cli.Context) error {
-			log.Print(c.Err())
-			if c.Err() == nil {
+			if c.Err() != nil {
+				log.Print(c.Err())
+			} else {
 				log.Print("Done")
 			}
 			return nil
@@ -146,7 +147,11 @@ func fixCommand() *cli.Command {
 			return fix.Run(options)
 		},
 		After: func(c *cli.Context) error {
-			log.Print("Done")
+			if c.Err() != nil {
+				log.Print(c.Err())
+			} else {
+				log.Print("Done")
+			}
 			return nil
 		},
 	}
